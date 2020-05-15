@@ -1,7 +1,7 @@
 import React,{useEffect , useState} from 'react';
 import axios from 'axios';
 import Receipe from './Receipe';
-import logo from './logo.svg';
+import LoadingSpinner from './LoadingSpinner';
 import './App.css';
 
 function App() {
@@ -9,6 +9,7 @@ function App() {
 const [receipe , setReceipe] =useState([]);
 const [search , setSearch] =useState('');
 const [query , setQuery] =useState('chicken');
+const [isLoaded, setIsLoaded] = useState(false);
 
 
  var appid ='40e26fcd';
@@ -19,14 +20,16 @@ const [query , setQuery] =useState('chicken');
 
 
 
+
 useEffect(( )=>{
  
   console.log('useeffecr run ');
-
+  setIsLoaded(true);
      axios.get(req)
      .then((res) => {
        const data =res.data.hits;
        setReceipe(data);
+       setIsLoaded(false);
        console.log( receipe);
     })
     .catch(function (error) {
@@ -49,6 +52,7 @@ const clicked = (e)=>{
 
   return (
     
+   
     <div className="App">   
     <h1 >React Receipe App </h1>
        <form className='search-form' onSubmit={clicked}>
@@ -57,27 +61,20 @@ const clicked = (e)=>{
         <input  className='btn' type='submit'/>
         </form>   
 
-      <div className='receipe'>
-        {receipe.map(recepe=>(
-        
-        <Receipe key ={recepe.recipe.label}
-        title ={recepe.recipe.label} 
-        cal =  {recepe.recipe.calories} 
-        image ={recepe.recipe.image} 
-        ingr ={recepe.recipe.ingredientLines} 
-        
-        >
-        </Receipe>
-
-        ))}
-
-      </div>  
-        
-
-        
-
+      {isLoaded ? <LoadingSpinner /> : 
+                   <div className='receipe'>
+                   {receipe.map(recepe=>(
+                   <Receipe key ={recepe.recipe.label}
+                   title ={recepe.recipe.label} 
+                   cal =  {recepe.recipe.calories} 
+                   image ={recepe.recipe.image} 
+                   ingr ={recepe.recipe.ingredientLines} 
+                   />         
+                   ))}
+                  
+                 </div> }
       
-     
+
     </div>
     
     
